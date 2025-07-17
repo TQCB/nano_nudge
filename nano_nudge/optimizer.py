@@ -92,7 +92,6 @@ class ParzenOptimizer(Optimizer):
       objective,
       n_trials,
       direction,
-  )
+  ):
     super().__init__(objective, n_trials, direction)
-
-    
+    pass
