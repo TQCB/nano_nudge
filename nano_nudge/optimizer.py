@@ -2,33 +2,19 @@ from .surrogate_model import SurrogateModel
 from .trial import Trial, TrialHistory, FrozenTrial
 from .acquisition import expected_improvement, multi_start_lbfgs
 
-class SurrogateBayesianOptimizer:
+class Optimizer:
   def __init__(
-    self,
-    objective,
-    n_trials,
-    direction,
-    n_startup_trials=10,
-    acquisition_function='expected_improvement'
-    ):
-    
-    if n_startup_trials > n_trials:
-      raise ValueError("You cannot have more startup trials than trials: increase n_trials or decrease n_startup_trials.")
-    
+      self,
+      objective,
+      n_trials,
+      direction,
+  ):
     self.history = TrialHistory()
+
     self.objective = objective
-    self.direction = direction
-    
-    if acquisition_function == 'expected_improvement':
-      self.acquisition_function = expected_improvement
-    
-    self.n_startup_trials = n_startup_trials
     self.n_trials = n_trials
-    
-    self.surrogate_model = SurrogateModel()
-    
-    self.surrogate_objective = self.create_surrogate_objective(direction)
-    
+    self.direction = direction
+
   def run_startup_trials(self):
     for i in range(self.n_startup_trials):
       trial = Trial()
@@ -37,6 +23,29 @@ class SurrogateBayesianOptimizer:
       frozen_trial = FrozenTrial(i, trial, value)
       self.history.add_trial(frozen_trial)
       print(frozen_trial)
+
+class SurrogateBayesianOptimizer(Optimizer):
+  def __init__(
+    self,
+    objective,
+    n_trials,
+    direction,
+    n_startup_trials=10,
+    acquisition_function=expected_improvement
+    ):
+
+    super().__init__(objective, n_trials, direction)
+
+    if n_startup_trials > n_trials:
+      raise ValueError("You cannot have more startup trials than trials: increase n_trials or decrease n_startup_trials.")
+    
+    self.acquisition_function = acquisition_function
+    
+    self.n_startup_trials = n_startup_trials
+    
+    self.surrogate_model = SurrogateModel()
+    
+    self.surrogate_objective = self.create_surrogate_objective(direction)
       
   def fit_surrogate_model(self):
     x, y = self.history.convert_to_xy()
@@ -77,3 +86,13 @@ class SurrogateBayesianOptimizer:
   def optimize(self):
     self.run_startup_trials()
     self.run_optimization_loop()
+
+class ParzenOptimizer(Optimizer):
+  def __init__(
+      objective,
+      n_trials,
+      direction,
+  )
+    super().__init__(objective, n_trials, direction)
+
+    
