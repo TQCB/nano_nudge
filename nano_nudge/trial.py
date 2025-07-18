@@ -1,10 +1,12 @@
+from typing import Optional
+
 import numpy as np
 
 class Trial:
-  def __init__(self, next_suggestion=None):
+  def __init__(self, next_suggestion: Optional[float] =None):
     self.suggestion = next_suggestion
   
-  def suggest_float(self, min, max):
+  def suggest_float(self, min: float, max: float) -> float:
     # if trial was created with a suggested value, then we suggest that directly
     if self.suggestion:
       return self.suggestion
@@ -13,7 +15,7 @@ class Trial:
     return self.suggestion
   
 class FrozenTrial:
-  def __init__(self, iteration, trial, value):
+  def __init__(self, iteration: int, trial: Trial, value: float):
     self.iteration = iteration
     self.suggestion = trial.suggestion
     self.value = value
@@ -23,21 +25,21 @@ class FrozenTrial:
   
 class TrialHistory:
   def __init__(self):
-    self.history = []
+    self.history: list[FrozenTrial] = []
     
-  def add_trial(self, frozen_trial):
+  def add_trial(self, frozen_trial: FrozenTrial):
     self.history.append(frozen_trial)
     
   def convert_to_xy(self):
     x = [trial.suggestion for trial in self.history]
     y = [trial.value for trial in self.history]
-    
+
     x = np.array(x).reshape(-1, 1)
     y = np.array(y)
     
     return x, y
   
-  def get_f_x_plus(self):
+  def get_f_x_plus(self) -> float:
     values = [trial.value for trial in self.history]
     return np.max(values)
     

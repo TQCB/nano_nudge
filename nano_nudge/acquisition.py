@@ -1,16 +1,19 @@
+from typing import Callable
+
 import numpy as np
 from scipy.stats import norm
 from scipy.optimize import minimize
 
-def expected_improvement(x_mu, x_std, f_x_plus):
+def expected_improvement(x_mu: float, x_std: float, f_x_plus: float) -> float:
   z = (x_mu - f_x_plus) / x_std
-  return (x_mu - f_x_plus) * norm.cdf(z) + x_std * norm.pdf(z)
+  result =  (x_mu - f_x_plus) * norm.cdf(z) + x_std * norm.pdf(z)
+  return float(result)
 
 def multi_start_lbfgs(
-  objective_function,
-  search_space_bounds,
-  n_restarts=25,
-  ):
+  objective_function: Callable,
+  search_space_bounds: list[tuple[float, float]],
+  n_restarts: int=25,
+  ) -> float:
   """
     Optimize a function using multi-start L-BFGS-B.
     
@@ -49,4 +52,4 @@ def multi_start_lbfgs(
       best_value = result.fun
       best_x = result.x
     
-  return best_x
+  return float(best_x)
