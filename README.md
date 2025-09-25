@@ -9,8 +9,9 @@
 Bayesian Optimization works by building a probabilistic model (a "surrogate model") of the objective function. This model is then used to intelligently select the most promising points to evaluate next.
 
 `nano-nudge` is built around a few key components:
-*   **`SurrogateBayesianOptimizer`**: The main class that orchestrates the optimization process.
+*   **`SurrogateBayesianOptimizer`**: The main class that orchestrates the optimization process using a surrogate model (random forest by fault) and acquisition functions like Expected Improvement (EI).
 *   **`SurrogateModel`**: A model that learns the shape of your objective function from past trials.
+*   **`ParzenOptimizer`**: An alternative optimizer that implements the Tree-Structured Parzen Estimator (TPE) approach (note that the parzen estimator in this implementation is simplified to not be tree-structured), building probability distributions (KDEs) for good and bad performing trials to guide sampling.
 *   **`Acquisition Function`**: A function (e.g., Expected Improvement) that uses the surrogate model's predictions to quantify how "promising" a candidate point is.
 *   **`Trial`**: An object that stores a parameter suggestion and its resulting value.
 
