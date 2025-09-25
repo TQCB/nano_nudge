@@ -119,7 +119,7 @@ class SurrogateBayesianOptimizer(OptimizerWithStartup):
       
       f_x_plus = self.history.get_f_x_plus()
       suggestion = multi_start_lbfgs(lambda x: self.surrogate_objective(x, f_x_plus), search_space_bounds=[(-5, 5)])
-      suggestion = float(suggestion[0])
+      suggestion = float(suggestion)
       
       trial = Trial(suggestion)
       value = self.objective(trial)
